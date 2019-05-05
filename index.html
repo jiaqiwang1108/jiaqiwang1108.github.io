@@ -33,6 +33,12 @@
 	        }
 	    });
 
+		$("#btn-start").click(function(event) {
+			$(".welcome-container").hide();
+			$(".question-container").show();
+	    	showQuestion(event);
+		});
+
 	    $("#btn-submit").click(function(event) {
 	    	showQuestion(event);
 		});
@@ -112,6 +118,10 @@
 <body>
 <!-- https://getbootstrap.com/docs/4.3/components/forms/#checkboxes-and-radios -->
 <div class="container">
+	<div class="welcome-container">
+		<h1>Welcome</h1>
+		<button id="btn-start" class="btn btn-primary">Start</button>
+	</div>
 
 	<div class="question-container">
 		<h3 id="question">Question</h3>

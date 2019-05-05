@@ -1,3 +1,8 @@
+.welcome-container,
 .question-container {
   padding-top: 60px;
+}
+
+.question-container {
+  display: none;
 }
