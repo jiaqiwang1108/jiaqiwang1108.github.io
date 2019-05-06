@@ -150,7 +150,7 @@ $(document).ready(function() {
 			}
 		} else {
 			var half = true;
-			for (i = 0; i < 4; i ++) {
+			for (i = 0; i < q_num; i ++) {
 				if (correct_answers[i] - selected_answers[i] < 0) {
 					half = false;
 				}
@@ -192,11 +192,11 @@ $(document).ready(function() {
 		// console.log(current_answers);
 
 		$("#question").text(head_type + questions[current_question_id]["question_text"]);
-		$("#1").text(current_answers[0][0]);
-		$("#2").text(current_answers[1][0]);
-		$("#3").text(current_answers[2][0]);
-		$("#4").text(current_answers[3][0]);
-		for (i = 0; i < 4; i ++ ) {
+		$("#1").text("A.  " + current_answers[0][0]);
+		$("#2").text("B.  " + current_answers[1][0]);
+		$("#3").text("C.  " + current_answers[2][0]);
+		$("#4").text("D.  " + current_answers[3][0]);
+		for (i = 0; i < q_num; i ++ ) {
 			correct_answers[i] = current_answers[i][1];
 		}
 		q_cnt[current_question_id] ++;
