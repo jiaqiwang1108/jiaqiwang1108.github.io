@@ -5,6 +5,8 @@ $(document).ready(function() {
 	var q_cnt = [0, 0, 0, 0];
 	var current_answers = [];
 	var correct_answers = [];
+	var correct_len = [];
+	var wrong_len = [];
 	var selected_answers = [0, 0, 0, 0];
 	var selected;
 
@@ -69,8 +71,10 @@ $(document).ready(function() {
 			question_id = lines[i][1];
 			if (lines[i][2] == 1) {
 				questions[question_id-1]["correct"].push(lines[i][0]);
+				correct_len[question_id-1] = questions[question_id-1]["correct"].length;
 			} else {
 				questions[question_id-1]["wrong"].push(lines[i][0]);
+				wrong_len[question_id-1] = questions[question_id-1]["wrong"].length;
 			}
 			
 	    }
@@ -100,27 +104,28 @@ $(document).ready(function() {
 	    return lines;
 	}
 
-	function checkAnswer(event) {
-		console.log(selected_answers);
-		console.log(correct_answers);
-		if (selected_answers.sort().toString() == correct_answers.sort().toString()) {
+	function checkAnswer(event) {	
+		if (selected_answers.toString() == correct_answers.toString()) {
 			console.log("success");
 			current_question_id++;
 			if (current_question_id == questions.length) {
 				current_question_id = 0;
 			}
-			selected_answers = [0, 0, 0, 0];
 		} else {
 			console.log("fail");
 		}
+		selected_answers = [0, 0, 0, 0];
 	}
 
 	function showQuestion(event) {
-		console.log(current_question_id);
-		current_answers[0] = [questions[current_question_id]["correct"][q_cnt[current_question_id]], 1];
-		current_answers[1] = [questions[current_question_id]["wrong"][q_cnt[current_question_id]], 0];
-		current_answers[2] = [questions[current_question_id]["wrong"][q_cnt[current_question_id] + 1], 0];
-		current_answers[3] = [questions[current_question_id]["wrong"][q_cnt[current_question_id] + 2], 0];
+		var c = q_cnt[current_question_id] % correct_len[current_question_id];
+		var w0 = q_cnt[current_question_id] % wrong_len[current_question_id];
+		var w1 = (q_cnt[current_question_id] + 1) % wrong_len[current_question_id];
+		var w2 = (q_cnt[current_question_id] + 2) % wrong_len[current_question_id];
+		current_answers[0] = [questions[current_question_id]["correct"][c], 1];
+		current_answers[1] = [questions[current_question_id]["wrong"][w0], 0];
+		current_answers[2] = [questions[current_question_id]["wrong"][w1], 0];
+		current_answers[3] = [questions[current_question_id]["wrong"][w2], 0];
 		console.log(current_answers);		
 		// shuffle(questions[current_question_id]["answers"]);
 		// shuffle(current_answers);
