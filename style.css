@@ -1,6 +1,11 @@
+.selection-container,
 .welcome-container,
 .question-container {
   padding-top: 60px;
+}
+
+.welcome-container {
+  display: none;
 }
 
 .question-container {

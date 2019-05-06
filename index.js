@@ -2,39 +2,59 @@
 $(document).ready(function() {
 	var questions = [];
 	var q_num;
-	var current_question_id = 0;
+	var current_question_line = 0;
 	var q_cnt = [];
 	var current_answers = [];
 	var correct_answers = [];
 	var correct_len = [];
 	var wrong_len = [];
-	var selected_answers = [];
+	var selected_answers = [0, 0, 0, 0];
 	var selected;
 	var q_type = [];
 	var feedback = [];
+	var id_list = [];
+	var start_id;
+	var data_q = "";
+	var data_a = "";
 
-    $.ajax({
-        type: "GET",
-        url: "Questions_data_prj3.csv",
-        dataType: "text",
-        contentType: "text/plain",
-        success: function(data) { 
-        	getQuestionText(data); 
-        }
-    });
+	$(".selection-container .btn").click(function(event) {
+		if ($(this).attr("id") == "val") {
+			data_q = "val/Questions_data_prj3_validation.csv";
+			data_a = "val/Answers_data_prj3_validation.csv";
+		} else {
+			data_q = "Questions_data_prj3.csv";
+			data_a = "Answers_data_prj3_update2.csv";			
+		}
+		$(".selection-container").hide();
+		$(".welcome-container").show();
+	    $.ajax({
+	        type: "GET",
+	        url: data_q,
+	        // url: "Questions_data_prj3.csv",
+	        // the line below is for data validation
+	        // url: "val/Questions_data_prj3_validation.csv",
+	        dataType: "text",
+	        contentType: "text/plain",
+	        success: function(data) { 
+	        	getQuestionText(data); 
+	        }
+	    });
 
-	$.ajax({
-        type: "GET",
-        url: "Answers_data_prj3_update2.csv",
-        dataType: "text",
-        contentType: "text/plain",
-        success: function(data) { 
-        	getAnswerText(data); 
-        }
-    });
+		$.ajax({
+	        type: "GET",
+	        url: data_a,
+	        // url: "Answers_data_prj3_update2.csv",
+	        // the line below is for data validation
+	        // url: "val/Answers_data_prj3_validation.csv",
+	        dataType: "text",
+	        contentType: "text/plain",
+	        success: function(data) { 
+	        	getAnswerText(data); 
+	        }
+	    });
+	});
 
 	$("#btn-start").click(function(event) {
-		// console.log(q_num);
 		$(".welcome-container").hide();
 		$(".question-container").show();
     	showQuestion(event);
@@ -66,21 +86,33 @@ $(document).ready(function() {
 	    		"correct": [],
 	    		"wrong": [],
 	    	});
-	    	if (lines[j][3].length > 1) {
-	    		q_type[lines[j][1] - 1] = 1;
-	    	} else {
-	    		q_type[lines[j][1] - 1] = 0;
-	    	}
+	    	id_list[j] = lines[j][1];
 		}
+
+		// to get the minimum value of question id
+		function min(arr) {
+			arr.sort(function(a,b) {
+				return a-b;
+			});
+			return arr[0];
+		}
+
+		start_id = min(id_list);
 
 	    q_num = questions.length;
 	    for (k = 0; k < q_num; k ++) {
 	    	q_cnt[k] = 0;
-	    	selected_answers[k] = 0;
 	    	feedback[k] = "";
+	    	// q_type[k] = 0;
 	    }
 
 		for (var i in lines) {
+	    	if (lines[i][3].length > 1) {
+	    		q_type[lines[i][1] - start_id] = 1;
+	    	} else {
+	    		q_type[lines[i][1] - start_id] = 0;
+	    	}
+
 	    	if (lines[i][3].indexOf("A") != -1 ) {
 	    		feedback[i] = feedback[i] + lines[i][4] + " \n ";
 	    	}
@@ -105,14 +137,15 @@ $(document).ready(function() {
 		var lines = processData(allText);
 		for (var i in lines) {
 			question_id = lines[i][1];
+			var line_index = question_id - start_id;
 			if (lines[i][2] == 1) {
-				questions[question_id-1]["correct"].push([lines[i][0],lines[i][4]]);
-				correct_len[question_id-1] = questions[question_id-1]["correct"].length;
-				questions[question_id-1]["correct"].sort(descend);
+				questions[line_index]["correct"].push([lines[i][0],lines[i][4]]);
+				correct_len[line_index] = questions[line_index]["correct"].length;
+				questions[line_index]["correct"].sort(descend);
 			} else {
-				questions[question_id-1]["wrong"].push([lines[i][0],lines[i][4]]);
-				wrong_len[question_id-1] = questions[question_id-1]["wrong"].length;
-				questions[question_id-1]["wrong"].sort(descend);
+				questions[line_index]["wrong"].push([lines[i][0],lines[i][4]]);
+				wrong_len[line_index] = questions[line_index]["wrong"].length;
+				questions[line_index]["wrong"].sort(descend);
 			}
 			
 	    }
@@ -143,14 +176,14 @@ $(document).ready(function() {
 
 	function checkAnswer(event) {	
 		if (selected_answers.toString() == correct_answers.toString()) {
-			alert("Congratulation, you answer is correct!" + " \n " +feedback[current_question_id]);
-			current_question_id++;
-			if (current_question_id == questions.length) {
-				current_question_id = 0;
+			alert("Congratulation, you answer is correct!" + " \n " +feedback[current_question_line]);
+			current_question_line++;
+			if (current_question_line == questions.length) {
+				current_question_line = 0;
 			}
 		} else {
 			var half = true;
-			for (i = 0; i < q_num; i ++) {
+			for (i = 0; i < 4; i ++) {
 				if (correct_answers[i] - selected_answers[i] < 0) {
 					half = false;
 				}
@@ -165,41 +198,41 @@ $(document).ready(function() {
 	}
 
 	function showQuestion(event) {		
-		// shuffle(questions[current_question_id]["answers"]);
-		if(q_type[current_question_id] == 0) {
+		// shuffle(questions[current_question_line]["answers"]);
+		if(q_type[current_question_line] == 0) {
 			var head_type = "(Multiple Choice Question) "
-			var c = q_cnt[current_question_id] % correct_len[current_question_id];
-			var w0 = q_cnt[current_question_id] % wrong_len[current_question_id];
-			var w1 = (q_cnt[current_question_id] + 1) % wrong_len[current_question_id];
-			var w2 = (q_cnt[current_question_id] + 2) % wrong_len[current_question_id];
-			current_answers[0] = [questions[current_question_id]["correct"][c][0], 1];
-			current_answers[1] = [questions[current_question_id]["wrong"][w0][0], 0];
-			current_answers[2] = [questions[current_question_id]["wrong"][w1][0], 0];
-			current_answers[3] = [questions[current_question_id]["wrong"][w2][0], 0];
+			var c = q_cnt[current_question_line] % correct_len[current_question_line];
+			var w0 = q_cnt[current_question_line] % wrong_len[current_question_line];
+			var w1 = (q_cnt[current_question_line] + 1) % wrong_len[current_question_line];
+			var w2 = (q_cnt[current_question_line] + 2) % wrong_len[current_question_line];
+			current_answers[0] = [questions[current_question_line]["correct"][c][0], 1];
+			current_answers[1] = [questions[current_question_line]["wrong"][w0][0], 0];
+			current_answers[2] = [questions[current_question_line]["wrong"][w1][0], 0];
+			current_answers[3] = [questions[current_question_line]["wrong"][w2][0], 0];
 		} else {
 			var head_type = "(Select All That Apply) "
-			var c0 = q_cnt[current_question_id] % correct_len[current_question_id];
-			var c1 = (q_cnt[current_question_id] + 1) % correct_len[current_question_id];
-			var w0 = q_cnt[current_question_id] % wrong_len[current_question_id];
-			var w1 = (q_cnt[current_question_id] + 1) % wrong_len[current_question_id];
-			current_answers[0] = [questions[current_question_id]["correct"][c0][0], 1];
-			current_answers[1] = [questions[current_question_id]["correct"][c1][0], 1];
-			current_answers[2] = [questions[current_question_id]["wrong"][w0][0], 0];
-			current_answers[3] = [questions[current_question_id]["wrong"][w1][0], 0];
+			var c0 = q_cnt[current_question_line] % correct_len[current_question_line];
+			var c1 = (q_cnt[current_question_line] + 1) % correct_len[current_question_line];
+			var w0 = q_cnt[current_question_line] % wrong_len[current_question_line];
+			var w1 = (q_cnt[current_question_line] + 1) % wrong_len[current_question_line];
+			current_answers[0] = [questions[current_question_line]["correct"][c0][0], 1];
+			current_answers[1] = [questions[current_question_line]["correct"][c1][0], 1];
+			current_answers[2] = [questions[current_question_line]["wrong"][w0][0], 0];
+			current_answers[3] = [questions[current_question_line]["wrong"][w1][0], 0];
 		}
 
 		shuffle(current_answers);
 		// console.log(current_answers);
 
-		$("#question").text(head_type + questions[current_question_id]["question_text"]);
+		$("#question").text(head_type + questions[current_question_line]["question_text"]);
 		$("#1").text("A.  " + current_answers[0][0]);
 		$("#2").text("B.  " + current_answers[1][0]);
 		$("#3").text("C.  " + current_answers[2][0]);
 		$("#4").text("D.  " + current_answers[3][0]);
-		for (i = 0; i < q_num; i ++ ) {
+		for (i = 0; i < 4; i ++ ) {
 			correct_answers[i] = current_answers[i][1];
 		}
-		q_cnt[current_question_id] ++;
+		q_cnt[current_question_line] ++;
 	}
 
 
