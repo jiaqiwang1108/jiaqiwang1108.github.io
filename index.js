@@ -117,7 +117,17 @@ $(document).ready(function() {
 				current_question_id = 0;
 			}
 		} else {
-			alert("Oops, your answer is not correct. Try this question again!");
+			var half = true;
+			for (i = 0; i < 4; i ++) {
+				if (correct_answers[i] - selected_answers[i] < 0) {
+					half = false;
+				}
+			}
+			if (half) {
+				alert("Oops, your answer is not quite right. Another options is also correct. Try this question again!");
+			} else {
+				alert("Oops, your answer is incorrect. Try this question again!");
+			}
 		}
 		selected_answers = [0, 0, 0, 0];
 	}
@@ -147,7 +157,7 @@ $(document).ready(function() {
 		}
 
 		shuffle(current_answers);
-		// console.log(current_answers);
+		console.log(current_answers);
 
 		$("#question").text(type + questions[current_question_id]["question_text"]);
 		$("#1").text(current_answers[0][0]);
