@@ -6,3 +6,17 @@
 .question-container {
   display: none;
 }
+
+.btn {
+	cursor: pointer;
+}
+
+.btns .btn {
+	/*height: 20px;*/
+	background-color: #fff;
+	text-align: left;
+}
+
+.btns .selected {
+	background-color: #a7ffeb !important;
+}
