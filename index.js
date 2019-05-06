@@ -1,15 +1,17 @@
 // https://stackoverflow.com/questions/7431268/how-to-read-data-from-csv-file-using-javascript/12289296#12289296
 $(document).ready(function() {
 	var questions = [];
+	var q_num;
 	var current_question_id = 0;
-	var q_cnt = [0, 0, 0, 0];
+	var q_cnt = [];
 	var current_answers = [];
 	var correct_answers = [];
 	var correct_len = [];
 	var wrong_len = [];
-	var selected_answers = [0, 0, 0, 0];
+	var selected_answers = [];
 	var selected;
 	var q_type = [];
+	var feedback = [];
 
     $.ajax({
         type: "GET",
@@ -32,6 +34,7 @@ $(document).ready(function() {
     });
 
 	$("#btn-start").click(function(event) {
+		// console.log(q_num);
 		$(".welcome-container").hide();
 		$(".question-container").show();
     	showQuestion(event);
@@ -55,32 +58,61 @@ $(document).ready(function() {
 
 	function getQuestionText(allText) {
 		var lines = processData(allText);
-		for (var i in lines) {
+		for (var j in lines) {
 	    	questions.push({
-	    		"question_id": lines[i][1],
-	    		"question_text": lines[i][2],
-	    		"type": lines[i][3],
+	    		"question_id": lines[j][1],
+	    		"question_text": lines[j][2],
+	    		"std_answer": lines[j][3],
 	    		"correct": [],
 	    		"wrong": [],
 	    	});
-	    	if (lines[i][3].length > 1) {
-	    		q_type[lines[i][1] - 1] = 1;
+	    	if (lines[j][3].length > 1) {
+	    		q_type[lines[j][1] - 1] = 1;
 	    	} else {
-	    		q_type[lines[i][1] - 1] = 0;
+	    		q_type[lines[j][1] - 1] = 0;
+	    	}
+		}
+
+	    q_num = questions.length;
+	    for (k = 0; k < q_num; k ++) {
+	    	q_cnt[k] = 0;
+	    	selected_answers[k] = 0;
+	    	feedback[k] = "";
+	    }
+
+		for (var i in lines) {
+	    	if (lines[i][3].indexOf("A") != -1 ) {
+	    		feedback[i] = feedback[i] + lines[i][4] + " \n ";
+	    	}
+	    	if (lines[i][3].indexOf("B") != -1 ) {
+	    		feedback[i] = feedback[i] + lines[i][6] + " \n ";
+	    	}
+	    	if (lines[i][3].indexOf("C") != -1 ) {
+	    		feedback[i] = feedback[i] + lines[i][8] + " \n ";
+	    	}
+	    	if (lines[i][3].indexOf("D") != -1 ) {
+	    		feedback[i] = feedback[i] + lines[i][10] + " \n ";
 	    	}
 	    }
+
 	}
 
 	function getAnswerText(allText) {
+		function descend(x,y){
+		    return y[1] - x[1];  //Descend by the second value of the array
+		}
+
 		var lines = processData(allText);
 		for (var i in lines) {
 			question_id = lines[i][1];
 			if (lines[i][2] == 1) {
-				questions[question_id-1]["correct"].push(lines[i][0]);
+				questions[question_id-1]["correct"].push([lines[i][0],lines[i][4]]);
 				correct_len[question_id-1] = questions[question_id-1]["correct"].length;
+				questions[question_id-1]["correct"].sort(descend);
 			} else {
-				questions[question_id-1]["wrong"].push(lines[i][0]);
+				questions[question_id-1]["wrong"].push([lines[i][0],lines[i][4]]);
 				wrong_len[question_id-1] = questions[question_id-1]["wrong"].length;
+				questions[question_id-1]["wrong"].sort(descend);
 			}
 			
 	    }
@@ -111,7 +143,7 @@ $(document).ready(function() {
 
 	function checkAnswer(event) {	
 		if (selected_answers.toString() == correct_answers.toString()) {
-			alert("Congratulation, you answer is correct!");
+			alert("Congratulation, you answer is correct!" + " \n " +feedback[current_question_id]);
 			current_question_id++;
 			if (current_question_id == questions.length) {
 				current_question_id = 0;
@@ -135,31 +167,31 @@ $(document).ready(function() {
 	function showQuestion(event) {		
 		// shuffle(questions[current_question_id]["answers"]);
 		if(q_type[current_question_id] == 0) {
-			var type = "(Multiple Choice Question) "
+			var head_type = "(Multiple Choice Question) "
 			var c = q_cnt[current_question_id] % correct_len[current_question_id];
 			var w0 = q_cnt[current_question_id] % wrong_len[current_question_id];
 			var w1 = (q_cnt[current_question_id] + 1) % wrong_len[current_question_id];
 			var w2 = (q_cnt[current_question_id] + 2) % wrong_len[current_question_id];
-			current_answers[0] = [questions[current_question_id]["correct"][c], 1];
-			current_answers[1] = [questions[current_question_id]["wrong"][w0], 0];
-			current_answers[2] = [questions[current_question_id]["wrong"][w1], 0];
-			current_answers[3] = [questions[current_question_id]["wrong"][w2], 0];
+			current_answers[0] = [questions[current_question_id]["correct"][c][0], 1];
+			current_answers[1] = [questions[current_question_id]["wrong"][w0][0], 0];
+			current_answers[2] = [questions[current_question_id]["wrong"][w1][0], 0];
+			current_answers[3] = [questions[current_question_id]["wrong"][w2][0], 0];
 		} else {
-			var type = "(Select All That Apply) "
+			var head_type = "(Select All That Apply) "
 			var c0 = q_cnt[current_question_id] % correct_len[current_question_id];
 			var c1 = (q_cnt[current_question_id] + 1) % correct_len[current_question_id];
 			var w0 = q_cnt[current_question_id] % wrong_len[current_question_id];
 			var w1 = (q_cnt[current_question_id] + 1) % wrong_len[current_question_id];
-			current_answers[0] = [questions[current_question_id]["correct"][c0], 1];
-			current_answers[1] = [questions[current_question_id]["correct"][c1], 1];
-			current_answers[2] = [questions[current_question_id]["wrong"][w0], 0];
-			current_answers[3] = [questions[current_question_id]["wrong"][w1], 0];
+			current_answers[0] = [questions[current_question_id]["correct"][c0][0], 1];
+			current_answers[1] = [questions[current_question_id]["correct"][c1][0], 1];
+			current_answers[2] = [questions[current_question_id]["wrong"][w0][0], 0];
+			current_answers[3] = [questions[current_question_id]["wrong"][w1][0], 0];
 		}
 
 		shuffle(current_answers);
-		console.log(current_answers);
+		// console.log(current_answers);
 
-		$("#question").text(type + questions[current_question_id]["question_text"]);
+		$("#question").text(head_type + questions[current_question_id]["question_text"]);
 		$("#1").text(current_answers[0][0]);
 		$("#2").text(current_answers[1][0]);
 		$("#3").text(current_answers[2][0]);
