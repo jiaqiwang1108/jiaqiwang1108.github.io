@@ -9,6 +9,7 @@ $(document).ready(function() {
 	var wrong_len = [];
 	var selected_answers = [0, 0, 0, 0];
 	var selected;
+	var q_type = [];
 
     $.ajax({
         type: "GET",
@@ -58,11 +59,16 @@ $(document).ready(function() {
 	    	questions.push({
 	    		"question_id": lines[i][1],
 	    		"question_text": lines[i][2],
+	    		"type": lines[i][3],
 	    		"correct": [],
 	    		"wrong": [],
 	    	});
+	    	if (lines[i][3].length > 1) {
+	    		q_type[lines[i][1] - 1] = 1;
+	    	} else {
+	    		q_type[lines[i][1] - 1] = 0;
+	    	}
 	    }
-	    // console.log(questions);
 	}
 
 	function getAnswerText(allText) {
@@ -78,7 +84,6 @@ $(document).ready(function() {
 			}
 			
 	    }
-	    // console.log(questions);
 	}
 
 	function processData(allText) {
@@ -106,31 +111,45 @@ $(document).ready(function() {
 
 	function checkAnswer(event) {	
 		if (selected_answers.toString() == correct_answers.toString()) {
-			console.log("success");
+			alert("Congratulation, you answer is correct!");
 			current_question_id++;
 			if (current_question_id == questions.length) {
 				current_question_id = 0;
 			}
 		} else {
-			console.log("fail");
+			alert("Oops, your answer is not correct. Try this question again!");
 		}
 		selected_answers = [0, 0, 0, 0];
 	}
 
-	function showQuestion(event) {
-		var c = q_cnt[current_question_id] % correct_len[current_question_id];
-		var w0 = q_cnt[current_question_id] % wrong_len[current_question_id];
-		var w1 = (q_cnt[current_question_id] + 1) % wrong_len[current_question_id];
-		var w2 = (q_cnt[current_question_id] + 2) % wrong_len[current_question_id];
-		current_answers[0] = [questions[current_question_id]["correct"][c], 1];
-		current_answers[1] = [questions[current_question_id]["wrong"][w0], 0];
-		current_answers[2] = [questions[current_question_id]["wrong"][w1], 0];
-		current_answers[3] = [questions[current_question_id]["wrong"][w2], 0];
-		console.log(current_answers);		
+	function showQuestion(event) {		
 		// shuffle(questions[current_question_id]["answers"]);
-		// shuffle(current_answers);
+		if(q_type[current_question_id] == 0) {
+			var type = "(Multiple Choice Question) "
+			var c = q_cnt[current_question_id] % correct_len[current_question_id];
+			var w0 = q_cnt[current_question_id] % wrong_len[current_question_id];
+			var w1 = (q_cnt[current_question_id] + 1) % wrong_len[current_question_id];
+			var w2 = (q_cnt[current_question_id] + 2) % wrong_len[current_question_id];
+			current_answers[0] = [questions[current_question_id]["correct"][c], 1];
+			current_answers[1] = [questions[current_question_id]["wrong"][w0], 0];
+			current_answers[2] = [questions[current_question_id]["wrong"][w1], 0];
+			current_answers[3] = [questions[current_question_id]["wrong"][w2], 0];
+		} else {
+			var type = "(Select All That Apply) "
+			var c0 = q_cnt[current_question_id] % correct_len[current_question_id];
+			var c1 = (q_cnt[current_question_id] + 1) % correct_len[current_question_id];
+			var w0 = q_cnt[current_question_id] % wrong_len[current_question_id];
+			var w1 = (q_cnt[current_question_id] + 1) % wrong_len[current_question_id];
+			current_answers[0] = [questions[current_question_id]["correct"][c0], 1];
+			current_answers[1] = [questions[current_question_id]["correct"][c1], 1];
+			current_answers[2] = [questions[current_question_id]["wrong"][w0], 0];
+			current_answers[3] = [questions[current_question_id]["wrong"][w1], 0];
+		}
+
+		shuffle(current_answers);
 		// console.log(current_answers);
-		$("#question").text(questions[current_question_id]["question_text"]);
+
+		$("#question").text(type + questions[current_question_id]["question_text"]);
 		$("#1").text(current_answers[0][0]);
 		$("#2").text(current_answers[1][0]);
 		$("#3").text(current_answers[2][0]);
@@ -141,17 +160,21 @@ $(document).ready(function() {
 		q_cnt[current_question_id] ++;
 	}
 
-	// https://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array
-	function shuffle(a) {
-	    var j, x, i;
-	    for (i = a.length - 1; i > 0; i--) {
-	        j = Math.floor(Math.random() * (i + 1));
-	        x = a[i];
-	        a[i] = a[j];
-	        a[j] = x;
-	    }
-	    return a;
-	}
+
+// https://blog.csdn.net/Charles_Tian/article/details/80342438 
+  function shuffle(arr) {
+    var len = arr.length;
+    //Traverse from the largest index and then decrease
+    for(var i=len-1;i>=0;i--){
+      //randomIndex is got from 0-arr.length randomly
+      var randomIndex = Math.floor(Math.random() * (i+1));
+      //the following three lines is exchanging the value selected randomly and the value currently traversed
+      var itemIndex = arr[randomIndex];
+      arr[randomIndex] = arr[i];
+      arr[i] = itemIndex;
+    }
+    return arr;
+  }
 
 });
 
