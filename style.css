@@ -12,6 +12,12 @@
   display: none;
 }
 
+.n-correct {
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+
 .btn {
 	cursor: pointer;
 }
@@ -23,5 +29,24 @@
 }
 
 .btns .selected {
+	background-color: #a7ffeb !important;
+}
+
+.n-correct li {
+	margin-bottom: 5px;
+	list-style-type: none;
+}
+
+.n-correct .light {
+	height: 30px;
+	width: 30px;
+	background-color: #fff;
+	border:5px solid #a7ffeb;
+}
+
+.n-correct .lightup {
+	height: 30px;
+	width: 30px;
+	border:5px solid #a7ffeb;
 	background-color: #a7ffeb !important;
 }

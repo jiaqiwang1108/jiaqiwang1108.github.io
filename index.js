@@ -16,6 +16,7 @@ $(document).ready(function() {
 	var start_id;
 	var data_q = "";
 	var data_a = "";
+	var nc = 0;
 
 	$(".selection-container .btn").click(function(event) {
 		if ($(this).attr("id") == "val") {
@@ -176,12 +177,29 @@ $(document).ready(function() {
 
 	function checkAnswer(event) {	
 		if (selected_answers.toString() == correct_answers.toString()) {
-			alert("Congratulation, you answer is correct!" + " \n " +feedback[current_question_line]);
-			current_question_line++;
-			if (current_question_line == questions.length) {
-				current_question_line = 0;
+			var seq = 2 - nc;
+			console.log(seq);
+			if (nc <= 1) {
+				eval("$('.n-correct li:eq(" + seq + ") .light').addClass('lightup')");
+				eval("$('.n-correct li:eq(" + seq + ") .light').removeClass('light')");
+				alert("Congratulation, you answer is correct!" + " \n " + "Get it correct for " + (2-nc).toString() + " more time(s) and you will master this question!"+ " \n " + "You are almost there!");
+				nc ++;
+			} else {
+				eval("$('.n-correct li:eq(" + seq + ") .light').addClass('lightup')");
+				eval("$('.n-correct li:eq(" + seq + ") .light').removeClass('light')");
+				alert("Congratulation, you achieve the 3-correct milestone!" + " \n " + feedback[current_question_line]);
+				current_question_line++;
+				if (current_question_line == questions.length) {
+					current_question_line = 0;
+				}
+				$('.lightup').addClass('light');
+				$('.lightup').removeClass('lightup');
+				nc = 0;
 			}
 		} else {
+			$('.lightup').addClass('light');
+			$('.lightup').removeClass('lightup');
+			nc = 0;
 			var half = true;
 			for (i = 0; i < 4; i ++) {
 				if (correct_answers[i] - selected_answers[i] < 0) {
@@ -189,9 +207,9 @@ $(document).ready(function() {
 				}
 			}
 			if (half) {
-				alert("Oops, your answer is not quite right. Another options is also correct. Try this question again!");
+				alert("Oops, your answer is not quite right. Another options is also correct. Hang in there!");
 			} else {
-				alert("Oops, your answer is incorrect. Try this question again!");
+				alert("Oops, your answer is incorrect. Hang in there!");
 			}
 		}
 		selected_answers = [0, 0, 0, 0];
@@ -222,7 +240,7 @@ $(document).ready(function() {
 		}
 
 		shuffle(current_answers);
-		// console.log(current_answers);
+		console.log(current_answers);
 
 		$("#question").text(head_type + questions[current_question_line]["question_text"]);
 		$("#1").text("A.  " + current_answers[0][0]);
