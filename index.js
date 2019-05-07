@@ -190,6 +190,7 @@ $(document).ready(function() {
 				alert("Congratulation, you achieve the 3-correct milestone!" + " \n " + feedback[current_question_line]);
 				current_question_line++;
 				if (current_question_line == questions.length) {
+					alert("You have completed all the question in this quiz successfully!" + " \n " + " Now you can close the website or retake the quiz :)");
 					current_question_line = 0;
 				}
 				$('.lightup').addClass('light');
