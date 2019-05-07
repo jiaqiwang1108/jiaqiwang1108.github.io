@@ -1,9 +1,12 @@
 @import "reset.css";
 
 html {
-	/*font-family: 'Lato', sans-serif;*/
+	font-family: 'Lato', sans-serif;
 	/*font-family: 'Raleway', sans-serif;*/
-	background-color: #f7f8f3;
+}
+
+.container {
+	background-color: #faf2e8;
 }
 
 .selection-container,
@@ -27,7 +30,10 @@ html {
 }
 
 .btn {
-	background-color: #78bcc4;
+	background-color: #ffa883;
+	margin-left: 30%;
+	margin-right: 30%;
+	padding: 10px;
 	cursor: pointer;
 }
 
