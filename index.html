@@ -7,6 +7,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
 <script type="text/javascript" src="index.js"></script>
 <link href="https://fonts.googleapis.com/css?family=Lato:300,300i,400,400i,700,700i,900,900i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i,800" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
@@ -16,17 +18,19 @@
 <!-- https://getbootstrap.com/docs/4.3/components/forms/#checkboxes-and-radios -->
 <div class="container">
 	<div class="selection-container">
-		<button id="orig" class="btn btn-primary">Use the original data</button>
-		<button id="val" class="btn btn-primary">Use the validation data</button>
+		<button id="orig" class="btn btn-primary btn-center">Use the original data</button>
+		<button id="val" class="btn btn-primary btn-center">Use the validation data</button>
 	</div>
 	<div class="welcome-container">
 		<h1>Welcome to your quiz!</h1>
-		<h1> Get prepared and see how far you can go!</h1>
+		<h1>Get prepared and see how far you can go!</h1>
+		<h3>You will have 4 different questions in total for this quiz. You will have to give correct answers to each of the questions three times in a row before you can proceed to the next question.</h3>
 		<button id="btn-start" class="btn btn-primary">Start the Quiz</button>
 	</div>
 
 	<div class="question-container">
-		<h3 id="question">Question</h3>
+		<h3 id="question-head"></h3>
+		<h3 id="question"></h3>
 		<div class="btns">
 			<ul>
 				<li><div class="btn" id="1"></div></li>
@@ -53,7 +57,8 @@
 		</div> -->
 		<button id="btn-submit" class="btn btn-primary">Submit</button>
 		<div class="n-correct">
-			<ul><span>3-Correct Progress</span>
+			<div id="correct-progress">Correct Progress <br> (Fill up 3 circles to move on to the next question)</div>
+			<ul class="flex-container">
 				<li><div class="light"></div></li>
 				<li><div class="light"></div></li>
 				<li><div class="light"></div></li>

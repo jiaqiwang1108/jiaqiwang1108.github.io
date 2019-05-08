@@ -101,7 +101,7 @@ $(document).ready(function() {
 		start_id = min(id_list);
 
 	    q_num = questions.length;
-	    for (k = 0; k < q_num; k ++) {
+	    for (k = 0; k < q_num; k++) {
 	    	q_cnt[k] = 0;
 	    	feedback[k] = "";
 	    	// q_type[k] = 0;
@@ -177,7 +177,7 @@ $(document).ready(function() {
 
 	function checkAnswer(event) {	
 		if (selected_answers.toString() == correct_answers.toString()) {
-			var seq = 2 - nc;
+			var seq = nc;
 			console.log(seq);
 			if (nc <= 1) {
 				eval("$('.n-correct li:eq(" + seq + ") .light').addClass('lightup')");
@@ -219,7 +219,7 @@ $(document).ready(function() {
 	function showQuestion(event) {		
 		// shuffle(questions[current_question_line]["answers"]);
 		if(q_type[current_question_line] == 0) {
-			var head_type = "(Multiple Choice Question) "
+			var head_type = "Multiple choice question with only one correct answer: ";
 			var c = q_cnt[current_question_line] % correct_len[current_question_line];
 			var w0 = q_cnt[current_question_line] % wrong_len[current_question_line];
 			var w1 = (q_cnt[current_question_line] + 1) % wrong_len[current_question_line];
@@ -229,7 +229,7 @@ $(document).ready(function() {
 			current_answers[2] = [questions[current_question_line]["wrong"][w1][0], 0];
 			current_answers[3] = [questions[current_question_line]["wrong"][w2][0], 0];
 		} else {
-			var head_type = "(Select All That Apply) "
+			var head_type = "Select all the answers that apply to this question: ";
 			var c0 = q_cnt[current_question_line] % correct_len[current_question_line];
 			var c1 = (q_cnt[current_question_line] + 1) % correct_len[current_question_line];
 			var w0 = q_cnt[current_question_line] % wrong_len[current_question_line];
@@ -243,7 +243,8 @@ $(document).ready(function() {
 		shuffle(current_answers);
 		console.log(current_answers);
 
-		$("#question").text(head_type + questions[current_question_line]["question_text"]);
+		$("#question-head").text(questions[current_question_line]["question_id"] + ". " + head_type);
+		$("#question").text(questions[current_question_line]["question_text"]);
 		$("#1").text("A.  " + current_answers[0][0]);
 		$("#2").text("B.  " + current_answers[1][0]);
 		$("#3").text("C.  " + current_answers[2][0]);

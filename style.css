@@ -1,8 +1,13 @@
 @import "reset.css";
 
 html {
+	height: 100%;
 	font-family: 'Lato', sans-serif;
 	font-weight: 300;
+}
+
+body {
+	height: 100%;
 }
 
 h1 {
@@ -23,6 +28,7 @@ h3 {
 
 
 .container {
+	height: 100%;
 	background-color: #faf2e8;
 }
 
@@ -38,18 +44,31 @@ h3 {
 
 .question-container {
   display: none;
+	position: relative;
+}
+
+#question-head {
+	font-weight: 500;
 }
 
 .n-correct {
 	position: absolute;
-	top: 0;
-	right: 0;
+	bottom: -60px;
+	right: 30px;
+}
+
+#correct-progress {
+	color: #ffa883;
+	font-weight: 400;
+	margin-bottom: 10px;
+}
+
+.flex-container {
+	display: flex;
 }
 
 .btn {
 	background-color: #ffa883;
-	margin-left: 30%;
-	margin-right: 30%;
 	padding: 10px;
 	cursor: pointer;
 }
@@ -86,27 +105,36 @@ h3 {
 	font-weight: 300;
 }
 
+.btn-center {
+	display: block;
+	text-align: center;
+	margin: auto;
+	margin-bottom: 50px;
+}
+
 .btn-primary:hover {
 	background-color: #f9812a;
 	border-color: #f9812a;
 }
 
-
 .n-correct li {
 	margin-bottom: 5px;
 	list-style-type: none;
+	flex-grow: 1;
 }
 
 .n-correct .light {
 	height: 30px;
 	width: 30px;
 	background-color: #fff;
-	border:5px solid #ffa883;
+	border: 2px solid #ffa883;
+	border-radius: 15px;
 }
 
 .n-correct .lightup {
 	height: 30px;
 	width: 30px;
-	border:5px solid #ffa883;
+	border: 2px solid #ffa883;
+	border-radius: 15px;
 	background-color: #ffa883 !important;
 }
