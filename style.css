@@ -53,7 +53,7 @@ h3 {
 
 .n-correct {
 	position: absolute;
-	bottom: -60px;
+	top: 15px;
 	right: 30px;
 }
 
