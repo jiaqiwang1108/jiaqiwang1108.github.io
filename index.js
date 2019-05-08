@@ -243,7 +243,9 @@ $(document).ready(function() {
 		shuffle(current_answers);
 		console.log(current_answers);
 
-		$("#question-head").text(questions[current_question_line]["question_id"] + ". " + head_type);
+		var question_seq = current_question_line + 1;
+
+		$("#question-head").text(question_seq + ". " + head_type);
 		$("#question").text(questions[current_question_line]["question_text"]);
 		$("#1").text("A.  " + current_answers[0][0]);
 		$("#2").text("B.  " + current_answers[1][0]);
